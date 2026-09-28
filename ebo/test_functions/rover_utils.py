@@ -112,13 +112,17 @@ class RoverDomain:
             self.rnd_stream = np.random.RandomState(np.random.randint(0, np.iinfo(np.int32).max - 1))
 
     # return the negative cost which need to be optimized
-    def __call__(self, params, n_samples=1000):
-        self.set_params(params)
+    def __call__(self, params, n_samples=1000, seed=None):
+        # seed: if not None, used to seed random operations.
+        rng = None if seed is None else np.random.RandomState(seed)
+        self.set_params(params, rng=rng)
 
         return -self.estimate_cost(n_samples=n_samples)
 
-    def set_params(self, params):
-        self.traj.set_params(params + self.rnd_stream.normal(0, 1e-4, params.shape),
+    def set_params(self, params, rng=None):
+        if rng is None:
+            rng = self.rnd_stream
+        self.traj.set_params(params + rng.normal(0, 1e-4, params.shape),
                              self.start if self.force_start else None,
                              self.goal if self.force_goal else None)
 

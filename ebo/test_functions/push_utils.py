@@ -210,13 +210,17 @@ def add_obstacles(b2world_interface, obsverts):
 
 def run_simulation(world, body, body2, robot, robot2, xvel, yvel,
                    xvel2, yvel2, rtor, rtor2, simulation_steps,
-                   simulation_steps2):
+                   simulation_steps2, rng=None):
+    # rng: if not None, used for seeding random operations.
+    if rng is None:
+        rng = np.random
+
     # simulating push with fixed direction pointing from robot location to body location
     desired_vel = np.array([xvel, yvel])
-    rvel = b2Vec2(desired_vel[0] + np.random.normal(0, 0.01), desired_vel[1] + np.random.normal(0, 0.01))
+    rvel = b2Vec2(desired_vel[0] + rng.normal(0, 0.01), desired_vel[1] + rng.normal(0, 0.01))
 
     desired_vel2 = np.array([xvel2, yvel2])
-    rvel2 = b2Vec2(desired_vel2[0] + np.random.normal(0, 0.01), desired_vel2[1] + np.random.normal(0, 0.01))
+    rvel2 = b2Vec2(desired_vel2[0] + rng.normal(0, 0.01), desired_vel2[1] + rng.normal(0, 0.01))
 
     tmax = np.max([simulation_steps, simulation_steps2])
     for t in range(tmax + 100):

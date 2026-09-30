@@ -27,8 +27,10 @@ class PushReward:
         # dimension of the input
         return self._dx
 
-    def __call__(self, argv):
+    def __call__(self, argv, seed=None):
         # returns the reward of pushing two objects with two robots
+        # seed: if not None, used to seed random operations.
+        rng = None if seed is None else np.random.RandomState(seed)
         rx = float(argv[0])
         ry = float(argv[1])
         xvel = float(argv[2])
@@ -57,7 +59,7 @@ class PushReward:
         robot = end_effector(world, (rx, ry), base, init_angle, hand_shape, hand_size)
         robot2 = end_effector(world, (rx2, ry2), base, init_angle2, hand_shape, hand_size)
         (ret1, ret2) = run_simulation(world, body, body2, robot, robot2, xvel, yvel, xvel2, yvel2, rtor, rtor2,
-                                      simu_steps, simu_steps2)
+                                      simu_steps, simu_steps2, rng=rng)
 
         ret1 = np.linalg.norm(np.array(self.gxy) - ret1)
         ret2 = np.linalg.norm(np.array(self.gxy2) - ret2)
